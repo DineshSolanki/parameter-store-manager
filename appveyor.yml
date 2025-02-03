@@ -5,7 +5,7 @@ platform:
 
 environment:
   matrix:
-    - nodejs_version: 10
+    - nodejs_version: 14
 
 cache:
   - '%LOCALAPPDATA%/Yarn'
@@ -27,7 +27,7 @@ clone_depth: 1
 install:
   - ps: Install-Product node $env:nodejs_version x64
   - set CI=true
-  - yarn
+  - yarn install --ignore-engines
 
 test_script:
   - yarn package-ci
