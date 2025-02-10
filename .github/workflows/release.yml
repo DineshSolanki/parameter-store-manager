@@ -36,8 +36,8 @@ jobs:
       - name: Install dependencies
         run: yarn --ignore-engines
 
-      - name: Run package-ci
-        run: yarn package-ci
+      - name: Run package-win
+        run: yarn package-win
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
