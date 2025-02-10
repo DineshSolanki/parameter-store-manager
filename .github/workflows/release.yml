@@ -51,6 +51,6 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{GITHUB_REPOSITORY}}-${{GITHUB_RUN_ID}}
-          path: release/*.exe
+          name: ${{ github.repository_id }}-${{ github.run_id }}
+          path: release/win-unpacked
           retention-days: 1 # Optional, default is 90 days
