@@ -38,6 +38,8 @@ jobs:
 
       - name: Run package-ci
         run: yarn package-ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run lint
         run: yarn lint
