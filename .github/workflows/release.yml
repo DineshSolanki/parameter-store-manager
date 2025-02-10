@@ -47,19 +47,10 @@ jobs:
       - name: Run build-e2e
         run: yarn build-e2e
 
-      - name: Archive Package
-        run: |
-          # Assuming your final package is in a directory named "dist" or similar
-          # and you want to create a zip archive named after your repo and the build ID.
-          # Adjust the paths and names as necessary.
-          mkdir package
-          xcopy /s /y release package
-          powershell Compress-Archive -Path package -DestinationPath "${GITHUB_REPOSITORY}-${GITHUB_RUN_ID}.zip"
-
       # **New Step: Upload Artifact**
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: ${GITHUB_REPOSITORY}-${GITHUB_RUN_ID}
-          path: ${GITHUB_REPOSITORY}-${GITHUB_RUN_ID}.zip
+          name: ${{GITHUB_REPOSITORY}}-${{GITHUB_RUN_ID}}
+          path: release/*.exe
           retention-days: 1 # Optional, default is 90 days
