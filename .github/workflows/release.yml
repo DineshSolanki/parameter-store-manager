@@ -52,15 +52,19 @@ jobs:
       - name: Cache node modules and electron
         uses: actions/cache@v3
         with:
-          ${{ matrix.os == 'macOS-latest' && 'path' }}: ${{ matrix.os == 'macOS-latest' && 'node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder' }}
-          ${{ matrix.os == 'ubuntu-latest' && 'path' }}: ${{ matrix.os == 'ubuntu-latest' && 'node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder' }}
-          ${{ matrix.os == 'windows-latest' && 'path' }}: ${{ matrix.os == 'windows-latest' && 'node_modules,flow-typed,C:/electron-cache,C:/electron-builder-cache' }}
+          path: 
+            if: matrix.os == 'macOS-latest'
+              node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder
+            if: matrix.os == 'ubuntu-latest'
+              node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder
+            if: matrix.os == 'windows-latest'
+              node_modules,flow-typed,C:/electron-cache,C:/electron-builder-cache
           key: ${{ runner.os }}-node-${node}-yarn-${runner.os == 'Linux' ? 'linux' : runner.os == 'macOS' ? 'macos' : 'windows'}-cache
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: ${matrix.node}
 
       - name: Install dependencies
         run: yarn --ignore-engines
