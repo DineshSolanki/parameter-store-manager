@@ -1,50 +1,19 @@
-name: Build and Test
+name: Windows Build
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
-  ELECTRON_CACHE: ${{ runner.os == 'Linux' || runner.os == 'macOS' || runner.os == 'Windows' ? runner.tempPath || runner.os == 'Windows' ? 'C:/electron-cache' : '$HOME/.cache/electron' }}
-  ELECTRON_BUILDER_CACHE: ${{ runner.os == 'Linux' || runner.os == 'macOS' || runner.os == 'Windows' ? runner.tempPath || runner.os == 'Windows' ? 'C:/electron-builder-cache' : '$HOME/.cache/electron-builder' }}
+  ELECTRON_CACHE: C:/electron-cache
+  ELECTRON_BUILDER_CACHE: C:/electron-builder-cache
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macOS-latest, ubuntu-latest, windows-latest]
-        node: [16.x]
-        include:
-          - os: macOS-latest
-            env:
-              ELECTRON_CACHE: $HOME/.cache/electron
-              ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
-          - os: ubuntu-latest
-            env:
-              ELECTRON_CACHE: $HOME/.cache/electron
-              ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
-              CXX: g++-8
-            addons:
-              apt:
-                sources:
-                  - ubuntu-toolchain-r-test
-                packages:
-                  - gcc-multilib
-                  - g++-8
-                  - g++-multilib
-                  - icnsutils
-                  - graphicsmagick
-                  - xz-utils
-                  - xorriso
-                  - rpm
-          - os: windows-latest
-            env:
-              ELECTRON_CACHE: C:/electron-cache
-              ELECTRON_BUILDER_CACHE: C:/electron-builder-cache
-
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -52,29 +21,20 @@ jobs:
       - name: Cache node modules and electron
         uses: actions/cache@v3
         with:
-          path: 
-            if: matrix.os == 'macOS-latest'
-              node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder
-            if: matrix.os == 'ubuntu-latest'
-              node_modules,flow-typed,$HOME/.cache/electron,$HOME/.cache/electron-builder
-            if: matrix.os == 'windows-latest'
-              node_modules,flow-typed,C:/electron-cache,C:/electron-builder-cache
-          key: ${{ runner.os }}-node-${node}-yarn-${runner.os == 'Linux' ? 'linux' : runner.os == 'macOS' ? 'macos' : 'windows'}-cache
+          path: |
+            node_modules
+            flow-typed
+            C:/electron-cache
+            C:/electron-builder-cache
+          key: windows-node-16-yarn-cache
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${matrix.node}
+          node-version: 10.x
 
       - name: Install dependencies
         run: yarn --ignore-engines
-
-      - name: Start virtual display (Linux only)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y xvfb
-          Xvfb :99 -ac -screen 0 1280x1024x16 &
-          export DISPLAY=:99
 
       - name: Run package-ci
         run: yarn package-ci
