@@ -52,5 +52,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.repository_id }}-${{ github.run_id }}
-          path: release/win-unpacked
+          path: dist
           retention-days: 1 # Optional, default is 90 days
