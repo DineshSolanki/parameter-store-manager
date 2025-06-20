@@ -1,0 +1,56 @@
+name: Windows Build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches: [main]
+
+env:
+  ELECTRON_CACHE: C:/electron-cache
+  ELECTRON_BUILDER_CACHE: C:/electron-builder-cache
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache node modules and electron
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            flow-typed
+            C:/electron-cache
+            C:/electron-builder-cache
+          key: windows-node-16-yarn-cache
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 10.x
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run package-win
+        run: yarn package-win
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run lint
+        run: yarn lint
+
+      - name: Run build-e2e
+        run: yarn build-e2e
+
+      # **New Step: Upload Artifact**
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.repository_id }}-${{ github.run_id }}
+          path: dist
+          retention-days: 1 # Optional, default is 90 days
