@@ -5,7 +5,7 @@ matrix:
     - os: osx
       language: node_js
       node_js:
-        - node
+        - lts/*
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
@@ -13,7 +13,7 @@ matrix:
     - os: linux
       language: node_js
       node_js:
-        - node
+        - lts/*
       addons:
         apt:
           sources:
@@ -31,7 +31,7 @@ matrix:
     - os: windows
       language: node_js
       node_js:
-        - node
+        - lts/*
       env:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
@@ -52,7 +52,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export CXX="g++-8"; fi
 
 install:
-  - yarn --ignore-engines
+  - yarn install --ignore-engines
   # On Linux, initialize "virtual display". See before_script
   - |
     if [ "$TRAVIS_OS_NAME" == "linux" ]; then
